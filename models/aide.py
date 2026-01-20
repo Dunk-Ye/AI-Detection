@@ -1,3 +1,5 @@
+# 纯torch实现 https://github.com/shilinyan99/AIDE/tree/main
+
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 import torch
