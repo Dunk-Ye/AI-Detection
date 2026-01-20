@@ -4,15 +4,12 @@ import torch
 import clip
 import open_clip
 from .srm_filter_kernel import all_normalized_hpf_list
-# import numpy as np
 import sys
 import torch.nn.functional as F
 from torchvision import transforms
 import math
-
-sys.path.append('/home/web_server/antispam/project/zhoudiansong/code/AIGC/CoDNet')
-sys.path.append('/home/web_server/antispam/project/zhoudiansong/code/AIGC/AIDE/data')
 from data.dct import DCT_base_Rec_Module
+
 try:
     from CoDNetv2 import CoDNet
 except ImportError:
