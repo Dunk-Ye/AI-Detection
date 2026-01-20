@@ -4,42 +4,25 @@ import torch
 import clip
 import open_clip
 from .srm_filter_kernel import all_normalized_hpf_list
-import numpy as np
-from .AIDE_COD import AIDE_COD_Model
-from .AIDE_COD_VIB import AIDE_COD_VIB_Model
-from .AIDE_COD_VIB_DEEPSTACK import AIDE_COD_VIB_DEEPSTACK_Model
-from .AIDE_COD_DEEPSTACK import AIDE_COD_DEEPSTACK_Model
-from .swin import load_pretrained_swin_transformer_base
-from .AIDE_COD_DEEPSTACK_SIGLIP2 import AIDE_COD_DEEPSTACK_SIGLIP2
-from .AIDE_COD_DEEPSTACK import AIDE_COD_DEEPSTACK
-from .AIDE_CDS_MERGE_RESNET import AIDE_CDS_MERGE_RESNET
-from .AIDE_CDS_MERGE_RESNET_B_TRACE import AIDE_CDS_MERGE_RESNET_B_TRACE
 
 class HPF(nn.Module):
   def __init__(self):
     super(HPF, self).__init__()
 
-    #Load 30 SRM Filters
     all_hpf_list_5x5 = []
-
     for hpf_item in all_normalized_hpf_list:
       if hpf_item.shape[0] == 3:
-        hpf_item = np.pad(hpf_item, pad_width=((1, 1), (1, 1)), mode='constant')
-
+        hpf_item = F.pad(hpf_item, (1, 1, 1, 1), mode='constant', value=0)
       all_hpf_list_5x5.append(hpf_item)
 
-    hpf_weight = torch.Tensor(all_hpf_list_5x5).view(30, 1, 5, 5).contiguous()
-    hpf_weight = torch.nn.Parameter(hpf_weight.repeat(1, 3, 1, 1), requires_grad=False)
+    hpf_weight = torch.stack(all_hpf_list_5x5).view(30, 1, 5, 5).contiguous()
+    self.hpf_weight = torch.nn.Parameter(hpf_weight.repeat(1, 3, 1, 1), requires_grad=False)
    
-
     self.hpf = nn.Conv2d(3, 30, kernel_size=5, padding=2, bias=False)
-    self.hpf.weight = hpf_weight
-
+    self.hpf.weight = self.hpf_weight
 
   def forward(self, input):
-
     output = self.hpf(input)
-
     return output
 
 
@@ -305,24 +288,5 @@ def AIDE(resnet_path, convnext_path):
     model = AIDE_Model(resnet_path, convnext_path)
     return model
 
-def AIDE_COD(resnet_path, convnext_path):
-    model = AIDE_COD_Model(resnet_path, convnext_path)
-    return model
-
-def AIDE_COD_VIB(resnet_path, convnext_path):
-    model = AIDE_COD_VIB_Model(resnet_path, convnext_path)
-    return model
-
-def AIDE_COD_VIB_DEEPSTACK(resnet_path, convnext_path, num_classes=7, lora_r=0, lora_alpha=16):
-    model = AIDE_COD_VIB_DEEPSTACK_Model(resnet_path, convnext_path, num_classes=num_classes)
-    return model
-
-def SWIN_BASE(**kwargs):
-    model = load_pretrained_swin_transformer_base(num_classes=2, pretrained=True)
-    return model
-
-def AIDE_COD_DEEPSTACK(resnet_path, convnext_path, num_classes=7, lora_r=0, lora_alpha=16):
-    model = AIDE_COD_DEEPSTACK_Model(resnet_path, convnext_path, num_classes=num_classes)
-    return model
 
 # if __name__ == '__main__':
