@@ -1,0 +1,31 @@
+# configs/swin_base_config.yaml
+# 数据集配置
+dataset:
+  train_path: "./data/processed/train"  # 训练集路径
+  val_path: "./data/processed/val"      # 验证集路径
+  num_classes: 10                       # 分类类别数
+  batch_size: 32                        # 批次大小
+  num_workers: 4                        # 数据加载线程数
+  img_size: 224                         # 输入图像尺寸
+
+# 模型配置
+model:
+  model_name: "swin_base_patch4_window7_224"  # Swin-base 模型规格
+  pretrained: True                             # 是否使用预训练权重
+  drop_rate: 0.1                               # Dropout 率
+
+# 训练配置
+train:
+  epochs: 100                  # 训练轮数
+  lr: 0.001                    # 初始学习率
+  weight_decay: 0.0001         # 权重衰减
+  lr_scheduler: "cosine"       # 学习率调度器
+  warmup_epochs: 5             # 预热轮数
+  device: "cuda"               # 训练设备 (cuda/cpu)
+  checkpoint_save_path: "./outputs/checkpoints/"  # 权重保存路径
+  log_path: "./outputs/logs/swin_base_train.log"   # 日志保存路径
+
+# 优化器配置
+optimizer:
+  type: "adamw"                # 优化器类型
+  betas: [0.9, 0.999]          # AdamW 参数
