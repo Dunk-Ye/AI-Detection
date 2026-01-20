@@ -1,6 +1,6 @@
-'''
-  Discrete Cosine Transform implemented by torch
-'''
+# Discrete Cosine Transform implemented by torch
+# 试用torch实现离散余弦变化
+
 
 import torch
 import torch.nn as nn
